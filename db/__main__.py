@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--conn', '-c', type=str, help='PostgreSQL connection string')
-    parser.add_argument('--drop', '-d', type=str, help='Drop schema before create')
+    parser.add_argument('--drop', '-d', type=bool, help='Drop schema before create')
 
     parsed_args = parser.parse_args()
 
