@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session as SQLSession
 
-from .models.base import BaseModel, Base
+from .models.base import BaseModel
 
 engine: Engine = None
 
@@ -24,7 +24,7 @@ def connect(conn: str):
         raise Exception('cannot initialize db twice')
 
     engine = create_engine(conn, echo=True, future=True)
-    Base.metadata.bind = engine
+    BaseModel.metadata.bind = engine
     Session = sessionmaker(engine)
 
 
