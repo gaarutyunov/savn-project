@@ -2,7 +2,7 @@ import argparse
 
 from sqlalchemy.sql.ddl import DropSchema
 
-from db.models import *
+from db.models import BaseModel, Competition, Tag, Team
 from db.session import connect, check_instance, engine
 
 from sqlalchemy import event, DDL
