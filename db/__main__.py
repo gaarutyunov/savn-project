@@ -12,7 +12,7 @@ def create_all(args: argparse.Namespace):
     check_instance()
 
     if args.drop:
-        event.listen(BaseModel.metadata, 'before_create', DropSchema(BaseModel.metadata.schema))
+        event.listen(BaseModel.metadata, 'before_create', DropSchema(BaseModel.metadata.schema, cascade=True))
 
     event.listen(BaseModel.metadata, 'before_create', DDL("CREATE SCHEMA IF NOT EXISTS %s" % BaseModel.metadata.schema))
 
