@@ -1,31 +1,36 @@
 import argparse
 
+from sqlalchemy.sql.ddl import DropSchema
+
 from db.models import *
 from db.session import connect, check_instance, engine
 
-from sqlalchemy import event
-from sqlalchemy.schema import CreateSchema
+from sqlalchemy import event, DDL
 
 
-def create_all():
+def create_all(args: argparse.Namespace):
     check_instance()
 
-    event.listen(BaseModel.metadata, 'before_create', CreateSchema(BaseModel.metadata.schema))
+    if args.drop:
+        event.listen(BaseModel.metadata, 'before_create', DropSchema(BaseModel.metadata.schema))
+
+    event.listen(BaseModel.metadata, 'before_create', DDL("CREATE SCHEMA IF NOT EXISTS %s" % BaseModel.metadata.schema))
 
     BaseModel.metadata.create_all(engine)
 
 
-def main(args):
+def main(args: argparse.Namespace):
     connect(args.conn)
 
-    create_all()
+    create_all(args)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--conn', '-c', type=str, help='PostgreSQL connection string')
+    parser.add_argument('--drop', '-d', type=str, help='Drop schema before create')
 
-    args = parser.parse_args()
+    parsed_args = parser.parse_args()
 
-    main(args)
+    main(parsed_args)
