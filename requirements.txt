@@ -1,3 +1,6 @@
 SQLAlchemy~=1.4.32
 psycopg2-binary==2.9.3
 kaggle~=1.5.12
+
+numpy~=1.21.0
+networkx~=2.6.3

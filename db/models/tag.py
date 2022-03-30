@@ -1,19 +1,38 @@
-from typing import Any
-
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import relationship
 
 from .base import BaseModel
 
 
 class Tag(BaseModel):
-    __tablename__ = 't_tag'
+    """Model for a tag of a Kaggle competition"""
 
-    name = Column(String, nullable=False, unique=True, index=True)
-    competitions: Any
+    __tablename__ = "t_tag"
+
+    slug = Column(String, nullable=False, unique=True, index=True)
+
+    competitions = relationship("CompetitionTag", backref="tags")
 
 
 class CompetitionTag(BaseModel):
-    __tablename__ = 't_competition_tag'
+    """Many-to-many relationship between Competition and Tag"""
 
-    competition_id = Column(Integer, ForeignKey('t_competition.id'), nullable=False, index=True)
-    tag_id = Column(Integer, ForeignKey('t_tag.id'), nullable=False, index=True)
+    __tablename__ = "t_competition_tag"
+
+    __table_args__ = (UniqueConstraint("competition_id", "tag_id"),)
+
+    competition_id = Column(
+        Integer,
+        ForeignKey("t_competition.id"),
+        nullable=False,
+        primary_key=True,
+    )
+    tag_id = Column(
+        Integer,
+        ForeignKey("t_tag.id"),
+        nullable=False,
+        primary_key=True,
+    )
+
+    tag = relationship("Tag")
+    competition = relationship("Competition")

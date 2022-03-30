@@ -1,26 +1,25 @@
 import argparse
 
-import kaggle
-
-from db.models import Competition
-from db.session import connect, add_one
+from db.session import connect
+from parse.competitions import parse_competitions
 
 
 def main(args):
-    connect(args)
+    """Entry point for parsing module.
 
-    competitions = kaggle.api.competitions_list(page=1)
+    Parses Kaggle competitions, tags and teams.
 
-    for comp in competitions:
-        ref: str = comp.ref
-        obj = Competition(slug=ref.split('/')[1])
-        add_one(obj)
+    :param args: command-line arguments
+    """
+    connect(args.conn)
+
+    parse_competitions()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--conn', '-c', type=str, help='PostgreSQL connection string')
+    parser.add_argument("--conn", "-c", type=str, help="PostgreSQL connection string")
 
     args = parser.parse_args()
 

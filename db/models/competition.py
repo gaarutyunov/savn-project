@@ -5,9 +5,11 @@ from .base import BaseModel
 
 
 class Competition(BaseModel):
-    __tablename__ = 't_competition'
+    """Model for Kaggle competition object"""
+
+    __tablename__ = "t_competition"
 
     slug = Column(String, nullable=False, unique=True, index=True)
 
-    tags = relationship('Tag', secondary='t_competition_tag', backref='competitions')
-    teams = relationship('Team', secondary='t_competition_team', backref='competitions')
+    tags = relationship("CompetitionTag", backref="competitions")
+    teams = relationship("CompetitionTeam", backref="competitions")
