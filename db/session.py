@@ -1,7 +1,6 @@
 import re
 from typing import Optional
 
-import numpy as np
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session as SQLSession

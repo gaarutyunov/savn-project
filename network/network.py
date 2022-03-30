@@ -11,16 +11,30 @@ from db.session import query
 
 
 def get_tag_nodes() -> np.ndarray:
+    """Get tag co-occurrence nodes from database
+
+    :return: 1-D Numpy array of nodes
+    """
     return np.fromiter((x[0] for x in query(__VIEW_TAG_NODES__)), dtype=int)
 
 
 def get_tag_edges() -> np.ndarray:
+    """Get tag co-occurrence weighted edges.
+
+    Weight is the count of co-occurrence.
+
+    :return: 2-D Numpy array where each row is (u, v, w)
+    """
     return np.fromiter(
         chain.from_iterable(list(x) for x in query(__VIEW_TAG_EDGES__)), dtype=int
     ).reshape((-1, 3))
 
 
 def get_label_mapping() -> dict:
+    """Get label mapping with tag names as labels
+
+    :return: Dictionary with key as node (tag) and value as node (tag) name
+    """
     mapping_json = next(query("SELECT kaggle.pg_Get_LabelMapping()"))
     mapping = json.loads(mapping_json[0])
 
@@ -28,6 +42,10 @@ def get_label_mapping() -> dict:
 
 
 def get_tag_graph() -> nx.Graph:
+    """Get networkx Graph of tag co-occurrence in competitions
+
+    :return: networkx graph object
+    """
     nodes = get_tag_nodes()
     edges = get_tag_edges()
     label_mapping = get_label_mapping()
@@ -41,6 +59,10 @@ def get_tag_graph() -> nx.Graph:
 
 
 def draw_graph(graph: nx.Graph):
+    """Draw graph with kamada kawai layout
+
+    :param graph: networkx Graph object
+    """
     layout = nx.kamada_kawai_layout(graph)
     all_params = get_all_params(graph, layout)
 
@@ -52,6 +74,12 @@ def draw_graph(graph: nx.Graph):
 
 
 def get_all_params(graph, layout):
+    """Get params for visualization
+
+    :param graph: networkx graph
+    :param layout: networkx layout
+    :return:
+    """
     node_params = {"G": graph, "pos": layout, "node_size": []}
     edges_params = {"G": graph, "pos": layout, "width": []}
     labels_params = {}
