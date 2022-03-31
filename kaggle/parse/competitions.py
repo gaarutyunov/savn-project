@@ -1,8 +1,8 @@
 import kaggle
 from sqlalchemy.sql.functions import now
 
-from db.models import Competition, CompetitionTeam, Team, CompetitionTag, Tag
-from db.session import add_one
+from kaggle.db.models import Competition, CompetitionTeam, Team, CompetitionTag, Tag
+from kaggle.db.session import add_one
 
 
 def iter_competitions():

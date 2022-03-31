@@ -1,7 +1,7 @@
 import argparse
 
-from db.session import connect
-from parse.competitions import parse_competitions
+from kaggle.db.session import connect
+from kaggle.parse.competitions import parse_competitions
 
 
 def main(args):

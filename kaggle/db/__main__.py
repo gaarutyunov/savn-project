@@ -1,14 +1,14 @@
 import argparse
 
-from db.models import (
+from kaggle.db.models import (
     BaseModel,
 )
-from db.procedures import PROCEDURES
-from db.session import connect, check_instance, engine
+from kaggle.db.procedures import PROCEDURES
+from kaggle.db.session import connect, check_instance, engine
 
 from sqlalchemy import event, DDL
 
-from db.views import VIEWS
+from kaggle.db.views import VIEWS
 
 
 def create_all(args: argparse.Namespace):
