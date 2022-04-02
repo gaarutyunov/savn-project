@@ -88,13 +88,15 @@ async def fetch_pull_requests(
         variables = {"query": query, "after": None}
 
         result: Optional[dict] = None
+        has_next_page = True
 
-        while result is None or result["data"]["search"]["pageInfo"]["hasNextPage"]:
+        while has_next_page:
             result = await session.execute(graph_query, variable_values=variables)
 
             if "errors" in result:
                 raise StopIteration(result["errors"])
 
+            has_next_page = result["search"]["pageInfo"]["hasNextPage"]
             end_cursor = result["search"]["pageInfo"]["endCursor"]
 
             logging.info(
@@ -130,23 +132,28 @@ def parse_all(
             pr_model.reviews.append(r_model)
 
             for c_node in r_node["comments"]["nodes"]:
-                c_model = Comment.as_unique(
-                    session,
-                    external_id=c_node["databaseId"],
-                    body=c_node["body"],
-                    author=User.as_unique(session, login=c_node["author"]["login"]),
-                    reply_to=Comment.as_unique(
+                reply_to = None
+                if c_node["replyTo"] is not None:
+                    reply_to = Comment.as_unique(
                         session,
                         external_id=c_node["replyTo"]["databaseId"],
                         body=c_node["replyTo"]["body"],
                         author=User.as_unique(
                             session, login=c_node["replyTo"]["author"]["login"]
                         ),
+                        review=r_model,
                     )
-                    if c_node["replyTo"] is not None
-                    else None,
+
+                c_model = Comment.as_unique(
+                    session,
+                    external_id=c_node["databaseId"],
+                    body=c_node["body"],
+                    author=User.as_unique(session, login=c_node["author"]["login"]),
+                    reply_to=reply_to,
                 )
 
                 r_model.comments.append(c_model)
+                if reply_to is not None:
+                    r_model.comments.append(reply_to)
 
         yield pr_model
