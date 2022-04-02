@@ -1,19 +1,11 @@
 import argparse
+import os
+from typing import Union
 
-from kaggle.db.models import (
-    BaseModel,
-    Competition,
-    Tag,
-    CompetitionTag,
-    Team,
-    CompetitionTeam
-)
-from kaggle.db.procedures import PROCEDURES
-from kaggle.db.session import connect, check_instance, engine
+from github.db.models import BaseModel, User, Request, Comment, Review, Repository
+from github.db.session import connect, check_instance, engine
 
 from sqlalchemy import event, DDL
-
-from kaggle.db.views import VIEWS
 
 
 def create_all(args: argparse.Namespace):
@@ -32,12 +24,6 @@ def create_all(args: argparse.Namespace):
         DDL("CREATE SCHEMA IF NOT EXISTS %s" % BaseModel.metadata.schema),
     )
 
-    for view in VIEWS:
-        event.listen(BaseModel.metadata, "after_create", DDL(view))
-
-    for procedure in PROCEDURES:
-        event.listen(BaseModel.metadata, "after_create", DDL(procedure))
-
     BaseModel.metadata.create_all(engine)
 
 
@@ -53,11 +39,17 @@ def main(args: argparse.Namespace):
     create_all(args)
 
 
+def coerce_bool(arg: Union[bool, str]):
+    if type(arg) == bool:
+        return arg
+    return arg.strip() != 'false'
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--conn", "-c", type=str, help="PostgreSQL connection string")
-    parser.add_argument("--drop", "-d", type=bool, help="Drop schema before create")
+    parser.add_argument("--conn", "-c", type=str, help="PostgreSQL connection string", default=os.environ.get("PG_CONN"))
+    parser.add_argument("--drop", "-d", type=coerce_bool, help="Drop schema before create", default=False)
 
     parsed_args = parser.parse_args()
 
