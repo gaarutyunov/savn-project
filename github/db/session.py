@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker, Session as SQLSession
+from sqlalchemy.orm import sessionmaker, Session as SQLSession, scoped_session
 
 from github.db.models.base import BaseModel
 
@@ -40,7 +40,7 @@ def prefix_inserts(insert, compiler, **kw):
     if not match:
         return visited
 
-    constraint = __CONSTRAINTS_MAP__[match.get("model")]
+    constraint = __CONSTRAINTS_MAP__[match.group("model")]
     if constraint is None:
         return visited
 
@@ -76,17 +76,15 @@ def connect(conn: str):
 
     engine = create_engine(conn, echo=True, future=True)
     BaseModel.metadata.bind = engine
-    Session = sessionmaker(engine)
+    Session = scoped_session(sessionmaker(engine, expire_on_commit=False))
+
+    return Session
 
 
-def add_one(obj: BaseModel):
-    """Add one instance to database
-
-    :param obj: an instance extending :class:`github.db.models.base.BaseModel`
-    """
+def commit():
+    """Commit changes to database"""
     check_instance()
-    with Session.begin() as session:
-        session.add(obj)
+    Session.commit()
 
 
 def query(stmt: str):

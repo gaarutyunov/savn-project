@@ -42,14 +42,26 @@ def main(args: argparse.Namespace):
 def coerce_bool(arg: Union[bool, str]):
     if type(arg) == bool:
         return arg
-    return arg.strip() != 'false'
+    return arg.strip() != "false"
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--conn", "-c", type=str, help="PostgreSQL connection string", default=os.environ.get("PG_CONN"))
-    parser.add_argument("--drop", "-d", type=coerce_bool, help="Drop schema before create", default=False)
+    parser.add_argument(
+        "--conn",
+        "-c",
+        type=str,
+        help="PostgreSQL connection string",
+        default=os.environ.get("PG_CONN"),
+    )
+    parser.add_argument(
+        "--drop",
+        "-d",
+        type=coerce_bool,
+        help="Drop schema before create",
+        default=False,
+    )
 
     parsed_args = parser.parse_args()
 

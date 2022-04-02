@@ -92,10 +92,10 @@ async def fetch_pull_requests(
         while result is None or result["data"]["search"]["pageInfo"]["hasNextPage"]:
             result = await session.execute(graph_query, variable_values=variables)
 
-            if result["errors"] is not None:
+            if "errors" in result:
                 raise StopIteration(result["errors"])
 
-            end_cursor = result["data"]["search"]["pageInfo"]["endCursor"]
+            end_cursor = result["search"]["pageInfo"]["endCursor"]
 
             logging.info(
                 "Finished with %s. Moving to %s" % (variables["after"], end_cursor)
@@ -103,39 +103,45 @@ async def fetch_pull_requests(
 
             variables["after"] = end_cursor
 
-            yield result["data"]["search"]["edges"]
+            yield result["search"]["edges"]
 
 
 def parse_all(
-    repository: Repository, requests: list[dict]
+    session, repository: Repository, requests: list[dict]
 ) -> Generator[Any, Request, None]:
     for pr_node in requests:
         pr = pr_node["node"]
-        pr_model = Request(
+        pr_model = Request.as_unique(
+            session,
             number=pr["number"],
             title=pr["title"],
-            author=User(login=pr["author"]["login"]),
+            author=User.as_unique(session, login=pr["author"]["login"]),
             repository=repository,
         )
 
         for r_node in pr["reviews"]["nodes"]:
-            r_model = Review(
+            r_model = Review.as_unique(
+                session,
                 external_id=r_node["databaseId"],
                 body=r_node["body"],
-                author=User(login=r_node["author"]["login"]),
+                author=User.as_unique(session, login=r_node["author"]["login"]),
             )
 
             pr_model.reviews.append(r_model)
 
             for c_node in r_node["comments"]["nodes"]:
-                c_model = Comment(
+                c_model = Comment.as_unique(
+                    session,
                     external_id=c_node["databaseId"],
                     body=c_node["body"],
-                    author=User(login=c_node["author"]["login"]),
-                    reply_to=Comment(
+                    author=User.as_unique(session, login=c_node["author"]["login"]),
+                    reply_to=Comment.as_unique(
+                        session,
                         external_id=c_node["replyTo"]["databaseId"],
                         body=c_node["replyTo"]["body"],
-                        author=User(login=c_node["replyTo"]["author"]["login"]),
+                        author=User.as_unique(
+                            session, login=c_node["replyTo"]["author"]["login"]
+                        ),
                     )
                     if c_node["replyTo"] is not None
                     else None,

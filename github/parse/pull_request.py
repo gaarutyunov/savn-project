@@ -1,13 +1,13 @@
 from github.api.pull_request import fetch_pull_requests, parse_all
 from github.db.models import Repository
-from github.db.session import add_one
+from github.db.session import commit
 
 
-async def parse_pull_requests(token: str, owner: str, name: str, n_comments: int):
-    repo = Repository(owner=owner, name=name)
+async def parse_pull_requests(session, token: str, owner: str, name: str, n_comments: int):
+    repo = Repository.as_unique(session, owner=owner, name=name)
 
-    add_one(repo)
+    commit()
 
     async for prs in fetch_pull_requests(token, repo, n_comments):
-        for pr in parse_all(repo, prs):
-            add_one(pr)
+        for _ in parse_all(session, repo, prs):
+            commit()

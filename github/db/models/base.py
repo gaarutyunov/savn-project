@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, MetaData
 from sqlalchemy.orm.exc import DetachedInstanceError
+from sqlalchemy.sql.functions import now
 
 metadata_obj = MetaData(schema="github")
 
@@ -18,8 +19,11 @@ class BaseModel(Base):
     id = Column(
         Integer, nullable=False, unique=True, primary_key=True, autoincrement=True
     )
-    created_at = Column(TIMESTAMP, nullable=False)
-    updated_at = Column(TIMESTAMP, nullable=False)
+    created_at = Column(TIMESTAMP, nullable=False, default=now())
+    updated_at = Column(TIMESTAMP, nullable=False, default=now())
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
     def __repr__(self) -> str:
         return self._repr(id=self.id)

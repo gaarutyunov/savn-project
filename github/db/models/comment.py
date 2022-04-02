@@ -2,9 +2,10 @@ from sqlalchemy import Integer, Column, ForeignKey, String
 from sqlalchemy.orm import relationship, backref
 
 from github.db.models.base import BaseModel
+from github.db.unique import UniqueMixin
 
 
-class Comment(BaseModel):
+class Comment(BaseModel, UniqueMixin):
     """Model for GitHub review comment"""
 
     __tablename__ = "t_comment"
@@ -16,8 +17,17 @@ class Comment(BaseModel):
     author_id = Column(Integer, ForeignKey("t_user.id"), nullable=False)
     reply_to_id = Column(Integer, ForeignKey("t_comment.id"))
 
-    review = relationship("Review", backref="comments")
-    author = relationship("Author", backref="comments")
+    author = relationship("User", backref="comments")
 
-    reply_to = relationship("Comment", backref="replies", remote_side=[id])
-    replies = relationship("Comment", backref=backref("reply_to", remote_side=[id]))
+    reply_to = relationship("Comment", remote_side="Comment.id")
+
+    def __repr__(self) -> str:
+        return super()._repr(external_id=self.external_id)
+
+    @classmethod
+    def unique_hash(cls, external_id, **kwargs):
+        return external_id
+
+    @classmethod
+    def unique_filter(cls, query, external_id, **kwargs):
+        return query.filter(Comment.external_id == external_id)

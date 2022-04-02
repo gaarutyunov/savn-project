@@ -13,9 +13,9 @@ def main(args):
 
     :param args: command-line arguments
     """
-    connect(args.conn)
+    session = connect(args.conn)
 
-    asyncio.run(parse_pull_requests(args.token, args.owner, args.name, args.n_comments))
+    asyncio.run(parse_pull_requests(session, args.token, args.owner, args.name, args.n_comments))
 
 
 if __name__ == "__main__":
@@ -38,7 +38,11 @@ if __name__ == "__main__":
     parser.add_argument("--owner", "-o", type=str, help="GitHub repository owner")
     parser.add_argument("--name", "-r", type=str, help="GitHub repository name")
     parser.add_argument(
-        "--n_comments", "-n", type=str, help="Min number of comments in pull request"
+        "--n_comments",
+        "-n",
+        type=int,
+        help="Min number of comments in pull request",
+        default=20,
     )
 
     args = parser.parse_args()
