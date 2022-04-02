@@ -3,7 +3,9 @@ from github.db.models import Repository
 from github.db.session import commit
 
 
-async def parse_pull_requests(session, token: str, owner: str, name: str, n_comments: int):
+async def parse_pull_requests(
+    session, token: str, owner: str, name: str, n_comments: int
+):
     repo = Repository.as_unique(session, owner=owner, name=name)
 
     commit()

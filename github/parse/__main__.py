@@ -15,7 +15,9 @@ def main(args):
     """
     session = connect(args.conn)
 
-    asyncio.run(parse_pull_requests(session, args.token, args.owner, args.name, args.n_comments))
+    asyncio.run(
+        parse_pull_requests(session, args.token, args.owner, args.name, args.n_comments)
+    )
 
 
 if __name__ == "__main__":
