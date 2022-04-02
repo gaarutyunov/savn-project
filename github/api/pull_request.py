@@ -70,7 +70,7 @@ __GITHUB_PULL_REQUEST_QUERY__ = """query ($query: String!, $after: String) {
 
 
 async def fetch_pull_requests(
-    token: str, repository: Repository, n_comments: int
+    token: str, repository: Repository, n_comments: int, after: str
 ) -> AsyncGenerator[Any, list[dict]]:
     transport = AIOHTTPTransport(
         url=__GITHUB_GRAPHQL_URL__, headers={"Authorization": "Bearer " + token}
@@ -85,7 +85,7 @@ async def fetch_pull_requests(
     async with Client(transport=transport) as session:
         graph_query = gql(__GITHUB_PULL_REQUEST_QUERY__)
 
-        variables = {"query": query, "after": None}
+        variables = {"query": query, "after": after}
 
         has_next_page = True
 

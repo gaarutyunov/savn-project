@@ -24,7 +24,7 @@ def main(args):
     session = connect(args.conn)
 
     asyncio.run(
-        parse_pull_requests(session, args.token, args.owner, args.name, args.n_comments)
+        parse_pull_requests(session, args.token, args.owner, args.name, args.n_comments, args.after)
     )
 
 
@@ -49,6 +49,9 @@ if __name__ == "__main__":
     parser.add_argument("--name", "-r", type=str, help="GitHub repository name")
     parser.add_argument(
         "--log", "-l", type=str, help="Log file name", default="parse.log"
+    )
+    parser.add_argument(
+        "--after", "-a", type=str, help="After for cursor", default=None
     )
     parser.add_argument(
         "--n_comments",
