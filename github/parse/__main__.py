@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import logging
 import os
 
 from github.db.session import connect
@@ -13,6 +14,13 @@ def main(args):
 
     :param args: command-line arguments
     """
+    logging.basicConfig(
+        filename=args.log,
+        filemode="a",
+        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+        level=logging.DEBUG,
+    )
     session = connect(args.conn)
 
     asyncio.run(
@@ -39,6 +47,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("--owner", "-o", type=str, help="GitHub repository owner")
     parser.add_argument("--name", "-r", type=str, help="GitHub repository name")
+    parser.add_argument(
+        "--log", "-l", type=str, help="Log file name", default="parse.log"
+    )
     parser.add_argument(
         "--n_comments",
         "-n",

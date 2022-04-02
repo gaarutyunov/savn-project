@@ -87,7 +87,6 @@ async def fetch_pull_requests(
 
         variables = {"query": query, "after": None}
 
-        result: Optional[dict] = None
         has_next_page = True
 
         while has_next_page:
