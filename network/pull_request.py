@@ -36,7 +36,7 @@ def get_labels() -> dict[int, str]:
     return {int(k): v for k, v in mapping.items()}
 
 
-def get_graph() -> nx.MultiDiGraph:
+def get_graph() -> nx.DiGraph:
     """Get repository graph
 
     :return: networkx Graph
@@ -45,7 +45,7 @@ def get_graph() -> nx.MultiDiGraph:
     edges = get_edges()
     labels = get_labels()
 
-    g = nx.MultiDiGraph()
+    g = nx.DiGraph()
     g.add_nodes_from(nodes)
     g.add_edges_from(edges)
 
