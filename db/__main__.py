@@ -2,13 +2,13 @@ import argparse
 import os
 from typing import Union
 
-from .models import BaseModel, User, Request, Comment, Review, Repository
-from .routines import ROUTINES
-from .session import connect, check_instance, engine
+from db.models import BaseModel, User, Request, Comment, Review, Repository
+from db.routines import ROUTINES
+from db.session import connect, check_instance, engine
 
 from sqlalchemy import event, DDL
 
-from .views import VIEWS
+from db.views import VIEWS
 
 
 def create_all(args: argparse.Namespace):

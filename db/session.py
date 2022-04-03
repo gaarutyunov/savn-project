@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session as SQLSession, scoped_session
 
-from .models.base import BaseModel
+from db.models.base import BaseModel
 
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.expression import Insert, text
@@ -74,7 +74,7 @@ def connect(conn: str):
     if engine is not None or Session is not None:
         raise Exception("cannot initialize db twice")
 
-    engine = create_engine(conn, echo=True, future=True)
+    engine = create_engine(conn, echo=False, future=True)
     BaseModel.metadata.bind = engine
     Session = scoped_session(sessionmaker(engine, expire_on_commit=False))
 

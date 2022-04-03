@@ -1,8 +1,8 @@
 from sqlalchemy import Integer, Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from .base import BaseModel
-from ..unique import UniqueMixin
+from db.models.base import BaseModel
+from db.unique import UniqueMixin
 
 
 class Request(BaseModel, UniqueMixin):

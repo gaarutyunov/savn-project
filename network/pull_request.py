@@ -4,7 +4,7 @@ from itertools import chain
 import networkx as nx
 import numpy as np
 
-from ..db.session import query
+from db.session import query
 
 
 def get_edges() -> np.ndarray:

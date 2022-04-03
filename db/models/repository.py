@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, UniqueConstraint
 
-from .base import BaseModel
-from ..unique import UniqueMixin
+from db.models.base import BaseModel
+from db.unique import UniqueMixin
 
 
 class Repository(BaseModel, UniqueMixin):

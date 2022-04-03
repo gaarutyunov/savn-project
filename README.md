@@ -1,4 +1,4 @@
-# Community detection in large open source project
+# Community detection in large open source projects
 
 For more information see [notebook](Arutyunov_source.ipynb)
 

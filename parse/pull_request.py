@@ -1,6 +1,6 @@
-from ..api.pull_request import fetch_pull_requests, parse_all
-from ..db.models import Repository
-from ..db.session import Session
+from api.pull_request import fetch_pull_requests, parse_all
+from db.models import Repository
+from db.session import Session
 
 
 async def parse_pull_requests(

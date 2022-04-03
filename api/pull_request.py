@@ -5,7 +5,7 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from sqlalchemy.orm import Session
 
-from ..db.models import Repository, Request, Review, User, Comment
+from db.models import Repository, Request, Review, User, Comment
 
 __GITHUB_GRAPHQL_URL__ = "https://api.github.com/graphql"
 
